@@ -9,7 +9,7 @@ user=$(whoami)		# This way, you can't read the script to find my database server
 			# Identity isn't set; that way, I can check to see if you're actually using one. Of course, it's recommended that you do.
 
 # And here's where we check the user's options.
-while getopts i:h:u:c:wrt:c:k:s: opt; do
+while getopts i:h:u:c:wrt:C:k:s: opt; do
 	case $opt in
 		i) # Use this identity file.
 			identity=$OPTARG
@@ -32,10 +32,10 @@ while getopts i:h:u:c:wrt:c:k:s: opt; do
 		t) # Where's the table?
 			table=$OPTARG
 			;;
-		c) # And the column?
+		C) # And the column?
 			column=$OPTARG
 			;;
-		k) # Will it be updating an existing spot? Which one?
+		k) # Will it be updating an existing spot? What column do we use to find it?
 			key=$OPTARG
 			state=updateTo
 			;;
@@ -47,7 +47,7 @@ done
 
 # Now we make a function to handle actually connecting, because this'll happen all over the place.
 function connectToDB {
-	if [ ! identity ]; then
+	if [ ! $identity ]; then
 		$sqlcom | ssh $user@$host $com # This sticks our SQL command into ssh, where it hits $com.
 	else
 		$sqlcom | ssh -i $identity $user@$host $com # Same, with a key file.
