@@ -48,9 +48,9 @@ done
 # Now we make a function to handle actually connecting, because this'll happen all over the place.
 function connectToDB {
 	if [ ! $identity ]; then
-		$sqlcom | ssh $user@$host $com # This sticks our SQL command into ssh, where it hits $com.
+		echo $sqlcom | ssh $user@$host $com # This sticks our SQL command into ssh, where it hits $com.
 	else
-		$sqlcom | ssh -i $identity $user@$host $com # Same, with a key file.
+		echo $sqlcom | ssh -i $identity $user@$host $com # Same, with a key file.
 	fi
 }
 
