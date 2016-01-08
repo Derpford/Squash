@@ -3,7 +3,7 @@
 
 # Start by getting some opts.
 # Here's the defaults:
-b=main.db		# The default database.
+db=main.db		# The default database.
 com=isql-vt 		# The default command is isql-vt, since it seems to be nice and pipe-able. Any command-line SQL program that can be piped into should do.
 host=$(hostname)	# The default hostname and username is the current one.
 user=$(whoami)		# This way, you can't read the script to find my database server.
