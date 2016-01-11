@@ -4,7 +4,7 @@
 # Start by getting some opts.
 # Here's the defaults:
 db=main.db		# The default database.
-com=isql-vt 		# The default command is isql-vt, since it seems to be nice and pipe-able. Any command-line SQL program that can be piped into should do.
+com=sqlite3 		# The default program to run remotely. Any pipeable database command will do.
 host=$(hostname)	# The default hostname and username is the current one.
 user=$(whoami)		# This way, you can't read the script to find my database server.
 			# Identity isn't set; that way, I can check to see if you're actually using one. Of course, it's recommended that you do.
