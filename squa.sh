@@ -33,15 +33,22 @@ done
 # Now we make a function to handle actually connecting, because this'll happen all over the place.
 function connectToDB {
 	if [ ! $identity ]; then
-		ssh $user@$host "$com $db '$input'" # This sticks our SQL command into ssh, where it hits $com.
-		echo ssh $user@$host "$com $db '$input'"
+		ssh $user@$host "$com $db '$sqlcom'" # This sticks our SQL command into ssh, where it hits $com.
+		echo ssh $user@$host "$com $db '$sqlcom'"
 	else
-		ssh -i $identity $user@$host "$com $db '$input'" # Same, with a key file.
-		echo ssh -i $identity $user@$host "$com $db '$input'"
+		ssh -i $identity $user@$host "$com $db '$sqlcom'" # Same, with a key file.
+		echo ssh -i $identity $user@$host "$com $db '$sqlcom'"
 
 	fi
 }
 
+# Here's where we're gonna make the function for assembling all the bits of data we're sticking into the DB.
+# The end result should be something along the lines of "insert into $table(title, text) values($filename, $(cat $filename)"
+function createCommand {
+	inputfile=$(cat)
+	echo "insert into $table (title, text) values ($inputfile, $(cat $inputfile));"
+}
+
 # Next up, the important bits.
-input=$(cat)
+sqlcom=createCommand
 connectToDB
