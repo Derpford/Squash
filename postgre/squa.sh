@@ -34,13 +34,13 @@ done
 # Now we make a function to handle actually connecting, because this'll happen all over the place.
 function connectToDB {
 	if [ ! $identity ]; then
-		ssh $host "$com $db -c '$sqlcom'" # This sticks our SQL command into ssh, where it hits $com.
+		ssh $host "echo \"$sqlcom\" | $com $db" # This sticks our SQL command into ssh, where it hits $com.
 	else
-		ssh -i $identity $host "$com $db -c '$sqlcom'" # Same, with a key file.
+		ssh -i $identity $host "echo \"$sqlcom\" | $com $db" # Same, with a key file.
 	fi
 }
 
 # The end result should be something along the lines of "insert into $table(title, text) values($filename, $(cat $filename)"
-sqlcom="insert into $table (title, text) values (\"$inputfile\", \"$(cat $inputfile)\");"
+sqlcom="insert into $table (title, text) values ('$inputfile', '$(cat $inputfile)');"
 # Next up, the important bits.
 connectToDB
