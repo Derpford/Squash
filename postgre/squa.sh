@@ -4,7 +4,7 @@
 # Start by getting some opts.
 # Here's the defaults:
 db=$(whoami)		# The default database.
-com="psql" 		# The default program to run remotely. Any pipeable database command will do.
+com="psql -Aq" 		# The default program to run remotely. Any pipeable database command will do.
 host=$(hostname)	# The default hostname and username is the current one.
 user=$(whoami)		# This way, you can't read the script to find my database server.
 table=blog		# The default table.
@@ -34,13 +34,19 @@ done
 # Now we make a function to handle actually connecting, because this'll happen all over the place.
 function connectToDB {
 	if [ ! $identity ]; then
-		ssh $host "echo \"$sqlcom\" | $com $db" # This sticks our SQL command into ssh, where it hits $com.
+		ssh $host "echo \"$sqlcom\" | $com $db; echo \"$sqlcom2\" | $com -tc $db" > ./diff-file
+    # This sticks our SQL command into ssh, where it hits $com. After that, it puts the result in diff-file.
+    diff $inputfile diff-file
+    # And then it diffs it.
 	else
-		ssh -i $identity $host "echo \"$sqlcom\" | $com $db" # Same, with a key file.
+    # Same, with a key file.
+		ssh -i $identity $host "echo \"$sqlcom\" | $com $db; echo \"$sqlcom2\" | $com -t $db" > ./diff-file
+    diff $inputfile diff-file
 	fi
 }
 
 # The end result should be something along the lines of "insert into $table(title, text) values($filename, $(cat $filename)"
 sqlcom="insert into $table (title, text) values ('$inputfile', '$(cat $inputfile)');"
+sqlcom2="select distinct text from $table where title='$inputfile';"
 # Next up, the important bits.
 connectToDB
