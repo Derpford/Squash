@@ -50,3 +50,4 @@ sqlcom="insert into $table (title, text) values ('$inputfile', '$(cat $inputfile
 sqlcom2="select distinct text from $table where title='$inputfile';"
 # Next up, the important bits.
 connectToDB
+rm ./diff-file # Take away that diff file for cleanup's sake.
