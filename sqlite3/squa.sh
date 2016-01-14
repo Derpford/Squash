@@ -4,7 +4,7 @@
 # Start by getting some opts.
 # Here's the defaults:
 db=main.db		# The default database.
-com="sqlite3 -echo" 		# The default program to run remotely. Any pipeable database command will do.
+com="sqlite3" 		# The default program to run remotely. Any pipeable database command will do.
 host=$(whoami)@$(hostname)	# The default hostname and username is the current one.
 			# This way, you can't read the script to find my database server.
 table="blog"		# The default table.
@@ -34,19 +34,21 @@ done
 # Now we make a function to handle actually connecting, because this'll happen all over the place.
 function connectToDB {
 	  if [ ! $identity ]; then
-		    ssh $host "echo \"$sqlcom\" | $com $db; echo \"$sqlcom2\" | $com -tc $db" > ./diff-file
+		    ssh $host "echo \"$sqlcom\" | $com $db; echo \"$sqlcom2\" | $com $db" > ./diff-file
         # This sticks our SQL command into ssh, where it hits $com. After that, it puts the result in diff-file.
         diff $inputfile diff-file
         # And then it diffs it.
 	  else
         # Same, with a key file.
-		    ssh -i $identity $host "echo \"$sqlcom\" | $com $db; echo \"$sqlcom2\" | $com -t $db" > ./diff-file
+		    ssh -i $identity $host "echo \"$sqlcom\" | $com $db; echo \"$sqlcom2\" | $com $db" > ./diff-file
         diff $inputfile diff-file
 	  fi
 }
 
 # The end result should be something along the lines of "insert into $table(title, text) values($filename, $(cat $filename)"
-sqlcom="insert into $table (title, text) values ('$inputfile', '$(cat $inputfile)');"
+cat $inputfile | sed "s/'/''/g"  "s/\;/\\\\\;/g" > ./saneInput
+saneInput=`cat saneInput`
+sqlcom="insert into $table (title, text) values ('$inputfile', '$saneInput');"
 sqlcom2="select distinct text from $table where title='$inputfile';"
 
 # Next up, the important bits.

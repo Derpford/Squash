@@ -46,7 +46,9 @@ function connectToDB {
 }
 
 # The end result should be something along the lines of "insert into $table(title, text) values($filename, $(cat $filename)"
-sqlcom="insert into $table (title, text) values ('$inputfile', '$(cat $inputfile)');"
+cat $inputfile | sed "s/'/\\\\\'/g" | sed "s/\;/\\\\\;/g" > ./saneInput
+saneInput=`cat saneInput`
+sqlcom="insert into $table (title, text) values ('$inputfile', E'$saneInput');"
 sqlcom2="select distinct text from $table where title='$inputfile';"
 # Next up, the important bits.
 connectToDB
