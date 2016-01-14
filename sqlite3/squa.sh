@@ -5,8 +5,8 @@
 # Here's the defaults:
 db=main.db		# The default database.
 com="sqlite3 -echo" 		# The default program to run remotely. Any pipeable database command will do.
-host=$(hostname)	# The default hostname and username is the current one.
-user=$(whoami)		# This way, you can't read the script to find my database server.
+host=$(whoami)@$(hostname)	# The default hostname and username is the current one.
+			# This way, you can't read the script to find my database server.
 table="blog"		# The default table.
 			# Identity isn't set; that way, I can check to see if you're actually using one. Of course, it's recommended that you do.
 
